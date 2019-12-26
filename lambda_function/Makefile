@@ -15,6 +15,10 @@ fetch-dependencies:
 	# Clean
 	rm headless-chromium.zip chromedriver.zip
 
+clean:
+	rm -rf build build.zip
+	rm -rf __pycache__
+
 build-lambda-package: clean fetch-dependencies
 	mkdir build
 	cp -r src build/.
