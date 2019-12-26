@@ -1,0 +1,15 @@
+Django==2.2.1
+django-rest-framework
+psycopg2-binary
+redis
+celery
+gunicorn
+kombu
+imagehash
+boto3
+selenium
+Pillow
+Appium-Python-Client
+sklearn
+cmake
+dlib

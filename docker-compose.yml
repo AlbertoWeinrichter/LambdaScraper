@@ -1,0 +1,56 @@
+version: '3.3'
+
+services:
+# _ _ _ _____ _____    _____ _____ _____
+#| | | |   __| __  |  |  _  |  _  |  _  |
+#| | | |   __| __ -|  |     |   __|   __|
+#|_____|_____|_____|  |__|__|__|  |__|
+
+  backend:
+    env_file: django_app/.env
+    build: django_app
+    command: ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
+    volumes:
+    - .:/code
+    ports:
+    - "8000:8000"
+
+  postgres:
+    restart: always
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
+
+# _____ _____ __    _____ _____ __ __
+#|     |   __|  |  |   __| __  |  |  |
+#|   --|   __|  |__|   __|    -|_   _|
+#|_____|_____|_____|_____|__|__| |_|
+
+  celery:
+    env_file: django_app/.env
+    build: django_app
+    command: celery -A config.celery_app worker -l info -E
+    volumes:
+    - .:/code
+
+  celery-beat:
+    env_file: django_app/.env
+    build: django_app
+    command: celery -A config.celery_app beat -l info
+    volumes:
+    - .:/code
+
+  rabbit:
+    hostname: rabbit
+    image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=mypass
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+volumes:
+  pgdata:
